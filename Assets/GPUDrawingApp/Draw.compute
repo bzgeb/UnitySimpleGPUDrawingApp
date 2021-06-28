@@ -1,0 +1,19 @@
+#pragma kernel Update
+#pragma kernel CSMain
+
+RWTexture2D<float4> _Result;
+float4 _MousePosition;
+float _BrushSize;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    _Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
+
+[numthreads(8,8,1)]
+void Update (uint3 id : SV_DispatchThreadID)
+{
+    if (length(id.xy - _MousePosition.xy) < _BrushSize)
+        _Result[id.xy] = float4(0.0, 0.0, 1.0, 0.0);
+}
