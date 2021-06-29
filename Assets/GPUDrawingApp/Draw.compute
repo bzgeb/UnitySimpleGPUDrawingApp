@@ -1,19 +1,43 @@
 #pragma kernel Update
 #pragma kernel CSMain
+#pragma kernel InitBackground
 
 RWTexture2D<float4> _Result;
 float4 _MousePosition;
+bool _MouseDown;
 float _BrushSize;
+float4 _BrushColour;
+float4 _BackgroundColour;
+
+float4 HardBrush(float2 pos, float4 currentColor, float4 brushColor)
+{
+    if (length(pos - _MousePosition.xy) < _BrushSize)
+        return brushColor;
+    return currentColor;
+}
+
+float4 SoftBrush(float2 pos, float4 currentColour, float4 brushColour)
+{
+    const float l = clamp(length(pos - _MousePosition.xy) / _BrushSize, 0.0, 1.0);
+    return lerp(currentColour, brushColour, 1.0 - l);
+}
+
+[numthreads(8,8,1)]
+void InitBackground(uint3 id : SV_DispatchThreadID)
+{
+    _Result[id.xy] = _BackgroundColour;
+}
 
 [numthreads(8,8,1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    _Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    _Result[id.xy] = float4(id.x & id.y, (id.x & 15) / 15.0, (id.y & 15) / 15.0, 0.0);
 }
 
 [numthreads(8,8,1)]
-void Update (uint3 id : SV_DispatchThreadID)
+void Update(uint3 id : SV_DispatchThreadID)
 {
-    if (length(id.xy - _MousePosition.xy) < _BrushSize)
-        _Result[id.xy] = float4(0.0, 0.0, 1.0, 0.0);
+    if (!_MouseDown) return;
+    
+    _Result[id.xy] = SoftBrush(id.xy, _Result[id.xy], _BrushColour);
 }
