@@ -3,6 +3,7 @@
 #pragma kernel InitBackground
 
 RWTexture2D<float4> _Result;
+float4 _PreviousMousePosition;
 float4 _MousePosition;
 bool _MouseDown;
 float _BrushSize;
@@ -11,8 +12,13 @@ float4 _BackgroundColour;
 
 float4 HardBrush(float2 pos, float4 currentColor, float4 brushColor)
 {
-    if (length(pos - _MousePosition.xy) < _BrushSize)
-        return brushColor;
+    for (float i = 0; i < 1.0; i += 0.05f)
+    {
+        float2 mousePos = lerp(_PreviousMousePosition.xy, _MousePosition.xy, i);
+        if (length(pos - mousePos) < _BrushSize)
+            return brushColor;
+    }
+
     return currentColor;
 }
 
@@ -38,6 +44,5 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 void Update(uint3 id : SV_DispatchThreadID)
 {
     if (!_MouseDown) return;
-    
     _Result[id.xy] = HardBrush(id.xy, _Result[id.xy], _BrushColour);
 }

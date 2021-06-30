@@ -11,6 +11,8 @@ public class DrawManager : MonoBehaviour
     [SerializeField] BrushSizeSlider _brushSizeSlider;
     RenderTexture _canvasRenderTexture;
 
+    Vector4 _previousMousePosition;
+    
     void Start()
     {
         _brushSizeSlider.slider.SetValueWithoutNotify(_brushSize);
@@ -25,6 +27,8 @@ public class DrawManager : MonoBehaviour
         _drawComputeShader.SetTexture(initBackgroundKernel, "_Result", _canvasRenderTexture);
         _drawComputeShader.Dispatch(initBackgroundKernel, _canvasRenderTexture.width / 8,
             _canvasRenderTexture.height / 8, 1);
+
+        _previousMousePosition = Input.mousePosition;
     }
 
     void Update()
@@ -32,6 +36,7 @@ public class DrawManager : MonoBehaviour
         if (_brushSizeSlider.isInUse) return;
         
         int updateKernel = _drawComputeShader.FindKernel("Update");
+        _drawComputeShader.SetVector("_PreviousMousePosition", _previousMousePosition);
         _drawComputeShader.SetVector("_MousePosition", Input.mousePosition);
         _drawComputeShader.SetBool("_MouseDown", Input.GetMouseButton(0));
         _drawComputeShader.SetFloat("_BrushSize", _brushSize);
@@ -39,6 +44,8 @@ public class DrawManager : MonoBehaviour
         _drawComputeShader.SetTexture(updateKernel, "_Result", _canvasRenderTexture);
         _drawComputeShader.Dispatch(updateKernel, _canvasRenderTexture.width / 8,
             _canvasRenderTexture.height / 8, 1);
+
+        _previousMousePosition = Input.mousePosition;
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dest)
