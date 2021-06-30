@@ -566,6 +566,7 @@ MonoBehaviour:
   _brushColour: {r: 0.6509434, g: 0.033775367, b: 0.033775367, a: 1}
   _brushSize: 10
   _brushSizeSlider: {fileID: 113421892}
+  _strokeSmoothingInterval: 0.05
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0
