@@ -39,5 +39,5 @@ void Update(uint3 id : SV_DispatchThreadID)
 {
     if (!_MouseDown) return;
     
-    _Result[id.xy] = SoftBrush(id.xy, _Result[id.xy], _BrushColour);
+    _Result[id.xy] = HardBrush(id.xy, _Result[id.xy], _BrushColour);
 }
