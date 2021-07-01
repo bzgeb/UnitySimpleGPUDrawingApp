@@ -24,7 +24,7 @@ public class DrawManager : MonoBehaviour
 
         int initBackgroundKernel = _drawComputeShader.FindKernel("InitBackground");
         _drawComputeShader.SetVector("_BackgroundColour", _backgroundColour);
-        _drawComputeShader.SetTexture(initBackgroundKernel, "_Result", _canvasRenderTexture);
+        _drawComputeShader.SetTexture(initBackgroundKernel, "_Canvas", _canvasRenderTexture);
         _drawComputeShader.Dispatch(initBackgroundKernel, _canvasRenderTexture.width / 8,
             _canvasRenderTexture.height / 8, 1);
 
@@ -42,7 +42,7 @@ public class DrawManager : MonoBehaviour
             _drawComputeShader.SetFloat("_BrushSize", _brushSize);
             _drawComputeShader.SetVector("_BrushColour", _brushColour);
             _drawComputeShader.SetFloat("_StrokeSmoothingInterval", _strokeSmoothingInterval);
-            _drawComputeShader.SetTexture(updateKernel, "_Result", _canvasRenderTexture);
+            _drawComputeShader.SetTexture(updateKernel, "_Canvas", _canvasRenderTexture);
             _drawComputeShader.Dispatch(updateKernel, _canvasRenderTexture.width / 8,
                 _canvasRenderTexture.height / 8, 1);
         }
