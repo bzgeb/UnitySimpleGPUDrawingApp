@@ -25,8 +25,19 @@ public class DrawManager : MonoBehaviour
         int initBackgroundKernel = _drawComputeShader.FindKernel("InitBackground");
         _drawComputeShader.SetVector("_BackgroundColour", _backgroundColour);
         _drawComputeShader.SetTexture(initBackgroundKernel, "_Canvas", _canvasRenderTexture);
-        _drawComputeShader.Dispatch(initBackgroundKernel, _canvasRenderTexture.width / 8,
-            _canvasRenderTexture.height / 8, 1);
+        _drawComputeShader.SetFloat("_CanvasWidth", _canvasRenderTexture.width);
+        _drawComputeShader.SetFloat("_CanvasHeight", _canvasRenderTexture.height);
+        _drawComputeShader.GetKernelThreadGroupSizes(initBackgroundKernel,
+            out uint xGroupSize, out uint yGroupSize, out _);
+        _drawComputeShader.Dispatch(initBackgroundKernel,
+            Mathf.CeilToInt(_canvasRenderTexture.width / (float) xGroupSize),
+            Mathf.CeilToInt(_canvasRenderTexture.height / (float) yGroupSize),
+            1);
+        _drawComputeShader.Dispatch(initBackgroundKernel,
+            Mathf.CeilToInt(_canvasRenderTexture.width / (float) xGroupSize),
+            Mathf.CeilToInt(_canvasRenderTexture.height / (float) yGroupSize),
+            1);
+
 
         _previousMousePosition = Input.mousePosition;
     }
@@ -43,10 +54,17 @@ public class DrawManager : MonoBehaviour
             _drawComputeShader.SetVector("_BrushColour", _brushColour);
             _drawComputeShader.SetFloat("_StrokeSmoothingInterval", _strokeSmoothingInterval);
             _drawComputeShader.SetTexture(updateKernel, "_Canvas", _canvasRenderTexture);
-            _drawComputeShader.Dispatch(updateKernel, _canvasRenderTexture.width / 8,
-                _canvasRenderTexture.height / 8, 1);
+            _drawComputeShader.SetFloat("_CanvasWidth", _canvasRenderTexture.width);
+            _drawComputeShader.SetFloat("_CanvasHeight", _canvasRenderTexture.height);
+
+            _drawComputeShader.GetKernelThreadGroupSizes(updateKernel,
+                out uint xGroupSize, out uint yGroupSize, out _);
+            _drawComputeShader.Dispatch(updateKernel,
+                Mathf.CeilToInt(_canvasRenderTexture.width / (float) xGroupSize),
+                Mathf.CeilToInt(_canvasRenderTexture.height / (float) yGroupSize),
+                1);
         }
-        
+
         _previousMousePosition = Input.mousePosition;
     }
 

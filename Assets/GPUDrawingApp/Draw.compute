@@ -2,6 +2,8 @@
 #pragma kernel InitBackground
 
 RWTexture2D<float4> _Canvas;
+float _CanvasWidth;
+float _CanvasHeight;
 float4 _PreviousMousePosition;
 float4 _MousePosition;
 float _StrokeSmoothingInterval;
@@ -26,14 +28,21 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, float4 brushColor, float 
 [numthreads(8,8,1)]
 void InitBackground(uint3 id : SV_DispatchThreadID)
 {
+    if (id.x >= _CanvasWidth || id.y >= _CanvasHeight)
+        return;
+
     _Canvas[id.xy] = _BackgroundColour;
 }
 
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
 {
-    if (!_MouseDown) return;
-    
+    if (!_MouseDown)
+        return;
+
+    if (id.x >= _CanvasWidth || id.y >= _CanvasHeight)
+        return;
+
     _Canvas[id.xy] = HardBrush(id.xy, _Canvas[id.xy], _BrushColour, _BrushSize,
                                _PreviousMousePosition, _MousePosition, _StrokeSmoothingInterval);
 }
