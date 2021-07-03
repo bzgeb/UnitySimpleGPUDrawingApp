@@ -23,14 +23,6 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, float4 brushColor, float 
     return currentColor;
 }
 
-/*
-float4 SoftBrush(float2 pos, float4 currentColour, float4 brushColour)
-{
-    const float l = clamp(length(pos - _MousePosition.xy) / _BrushSize, 0.0, 1.0);
-    return lerp(currentColour, brushColour, 1.0 - l);
-}
-*/
-
 [numthreads(8,8,1)]
 void InitBackground(uint3 id : SV_DispatchThreadID)
 {
