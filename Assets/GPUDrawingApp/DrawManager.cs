@@ -33,7 +33,7 @@ public class DrawManager : MonoBehaviour
 
     void Update()
     {
-        if (!_brushSizeSlider.isInUse)
+        if (!_brushSizeSlider.isInUse && Input.GetMouseButton(0))
         {
             int updateKernel = _drawComputeShader.FindKernel("Update");
             _drawComputeShader.SetVector("_PreviousMousePosition", _previousMousePosition);
