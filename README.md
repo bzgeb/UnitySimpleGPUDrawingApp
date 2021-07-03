@@ -1,4 +1,4 @@
 # Unity Simple GPU Drawing App
-A GPU mesh voxelizer for Unity. Read the accompanying blog post [here]().
+A simple GPU-based Drawing App made with Unity. Read the accompanying blog post [here](https://bronsonzgeb.com/index.php/2021/07/03/a-simple-gpu-based-drawing-app-in-unity/).
 
 ![Example]()
